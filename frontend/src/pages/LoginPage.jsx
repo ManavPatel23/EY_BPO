@@ -39,7 +39,7 @@ const LoginPage = () => {
     setError("");
 
     try {
-      const response = await axios.post(`${BACKEND_URL}/user/login`, formData, {
+      const response = await axios.post(`${BACKEND_URL}/hosp/login`, formData, {
         withCredentials: true,
       });
 
@@ -51,7 +51,13 @@ const LoginPage = () => {
           sameSite: "none",
         });
 
-        console.log("User Logged In Successfully:", user);
+        Cookies.set("role", user.role, {
+          expires: 7,
+          secure: true,
+          sameSite: "none",
+        });
+
+        console.log(`${user.role} Logged In Successfully:`, user);
         setUser(user); // ✅ Set user in context
         navigate("/"); // ✅ Redirect after login
       } else {

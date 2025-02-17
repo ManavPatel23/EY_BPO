@@ -31,9 +31,13 @@ export default function SignUpPage() {
     setSuccess("");
 
     try {
-      const response = await axios.post(`${BACKEND_URL}/user/`, formData, {
-        withCredentials: true,
-      });
+      const response = await axios.post(
+        `${BACKEND_URL}/hosp/register`,
+        formData,
+        {
+          withCredentials: true,
+        }
+      );
 
       if (response.status === 201 || response.status === 200) {
         setSuccess("Registration successful! Redirecting...");

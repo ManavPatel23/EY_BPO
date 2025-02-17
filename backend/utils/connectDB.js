@@ -15,7 +15,6 @@ const connectDb = async () => {
       process.env.GEMINI_API_KEY
     );
 
-    // Start watching hospital documents
     await watcher.watchUploads(HospitalSubmitted);
 
     console.log("Document watcher initialized successfully");

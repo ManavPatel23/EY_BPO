@@ -1,6 +1,6 @@
-import axios from "axios";
 import Cookies from "js-cookie";
 import { BACKEND_URL } from "../../constant";
+import axios from "axios";
 
 export const getUserDetails = async (
   setIsAuthen,
@@ -20,7 +20,7 @@ export const getUserDetails = async (
 
     // Send request with Authorization header
 
-    const response = await axios.get(`${BACKEND_URL}/user/`, {
+    const response = await axios.get(`${BACKEND_URL}/hosp/me`, {
       headers: {
         Authorization: token ? `Bearer ${token}` : "",
         "ngrok-skip-browser-warning": "skip-browser-warning",

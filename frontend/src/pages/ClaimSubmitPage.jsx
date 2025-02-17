@@ -10,6 +10,7 @@ import {
 import { Upload } from "lucide-react";
 import axios from "axios";
 import { BACKEND_URL } from "@/constant";
+import Cookies from "js-cookie";
 
 const ClaimSubmitPage = () => {
   const [currentStep, setCurrentStep] = useState(0);
@@ -83,10 +84,25 @@ const ClaimSubmitPage = () => {
       });
     });
 
+    const token = Cookies.get("token");
+
+    if (!token) {
+      throw new Error("No authentication token found. Please log in.");
+    }
+
     try {
       // Replace with your actual API endpoint
       console.log("Form submitted:", formDataToSend);
-      const response = await axios.post(`${BACKEND_URL}/hosp/`, formDataToSend);
+      const response = await axios.post(
+        `${BACKEND_URL}/hosp/`,
+        formDataToSend,
+        {
+          headers: {
+            Authorization: token ? `Bearer ${token}` : "",
+            "ngrok-skip-browser-warning": "skip-browser-warning",
+          },
+        }
+      );
       console.log("RESPONSE ", response.data);
     } catch (error) {
       console.error("Error submitting form:", error);
