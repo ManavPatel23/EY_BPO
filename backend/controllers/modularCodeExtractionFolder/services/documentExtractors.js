@@ -2,6 +2,7 @@
 const extractors = {
   getPolicyDetailsPrompt: (template) => {
     return `Extract policy information from this document and return it in the following JSON structure. Follow these rules strictly:
+  
   - For number fields (sumAssured, premiumAmount): use null if not found, convert all amounts to numbers without currency symbols or commas
   - For date fields (policyStartDate, policyEndDate): convert to ISO format date strings (YYYY-MM-DD), use null if not found
   - If start/end dates are shown as a period/duration, calculate the end date from the start date and duration

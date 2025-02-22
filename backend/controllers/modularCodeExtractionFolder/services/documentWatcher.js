@@ -82,6 +82,29 @@ class DocumentWatcher {
 
           const processor = new GeminiProcessor(process.env.GEMINI_API_KEY);
 
+          // Process policy details if present
+          if (doc.policyDocuments?.length > 0) {
+            const policyJson = await this.processDocuments(
+              doc.policyDocuments,
+              "PolicyDetails",
+              policyDetailsTemplate,
+              policyDetailsTemplateSchema,
+              dataMergers.mergePolicyDetails
+            );
+            updates = {
+              ...updates,
+              policyDetails: JSON.parse(JSON.stringify(policyJson)),
+            };
+            console.log("UPDATE SUCCESSFUL For Policy Details\n");
+          }
+
+          // find policyDetails based on the policy number provided from the document .
+          // if there is no policy details found then return error message
+          // if found store it and will use it for further verification such as medical history given or not previosly
+
+          const policyNumberProvided = updates.policyDetails.policyNumber;
+
+
           // Process patient details if present
           if (doc.patientDetailsDocuments?.length > 0) {
             // Get JSON response from processDocuments
@@ -103,6 +126,7 @@ class DocumentWatcher {
 
             console.log("UPDATE SUCCESSFUL For Patient Personal Details\n");
           }
+          // Process billing details if present
           if (doc.billsDocuments?.length > 0) {
             const billingJson = await this.processDocuments(
               doc.billsDocuments,
@@ -232,21 +256,7 @@ class DocumentWatcher {
             };
             console.log("UPDATE SUCCESSFUL For Doctor's Note Details\n");
           }
-          // Process policy details if present
-          if (doc.policyDocuments?.length > 0) {
-            const policyJson = await this.processDocuments(
-              doc.policyDocuments,
-              "PolicyDetails",
-              policyDetailsTemplate,
-              policyDetailsTemplateSchema,
-              dataMergers.mergePolicyDetails
-            );
-            updates = {
-              ...updates,
-              policyDetails: JSON.parse(JSON.stringify(policyJson)),
-            };
-            console.log("UPDATE SUCCESSFUL For Policy Details\n");
-          }
+
           // Final logging of the complete updates object
           console.log("JSON DATA:", JSON.stringify(updates, null, 2));
 
@@ -279,7 +289,10 @@ class DocumentWatcher {
             promptForConsistencyCheck
           );
           geminiOutputCheckData.consistencyCheck = resultForConsistencyCheck;
-          console.log("resultForConsistencyCheck done ");
+          console.log(
+            "resultForConsistencyCheck done ",
+            geminiOutputCheckData.consistencyCheck
+          );
 
           // Extracting Relevant Medical Data
           const extractedData = extractRelevantMedicalData(updates);
@@ -291,7 +304,10 @@ class DocumentWatcher {
           );
           geminiOutputCheckData.relevantMedicalDataCheck =
             resultForRelevantData;
-          console.log("resultForRelevantData done");
+          console.log(
+            "resultForRelevantData done",
+            geminiOutputCheckData.relevantMedicalDataCheck
+          );
 
           // Extracting Relevant Billing Data
           const extractedDataOfBilling = extractRelevantBillingData(updates);
@@ -304,7 +320,10 @@ class DocumentWatcher {
           );
           geminiOutputCheckData.relevantBillingDataCheck =
             resultForRelevantBillingData;
-          console.log("resultForRelevantBillingData done");
+          console.log(
+            "resultForRelevantBillingData done",
+            geminiOutputCheckData.relevantBillingDataCheck
+          );
 
           // Final Output
 

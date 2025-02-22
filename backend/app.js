@@ -10,7 +10,11 @@ const path = require("path");
 
 // routers import
 // const userRouter = require("./routers/user");
+const hospRouter = require("./routers/hospRouter.js");
 const hospitalRouter = require("./routers/hospitalRouter.js");
+const policyRouter = require("./routers/policyRouter.js");
+const patientRouter = require("./routers/patientRouter.js");
+const userRouter = require("./routers/userRouter.js");
 
 const app = express();
 dotenv.config();
@@ -60,7 +64,11 @@ app.get("/", (req, res) => {
 connectDb();
 
 // adding routers
+app.use("/api/v1/hospital", hospRouter);
 app.use("/api/v1/hosp", hospitalRouter);
+app.use("/api/v1/policy", policyRouter);
+app.use("/api/v1/patient", patientRouter);
+app.use("/api/v1/user", userRouter);
 
 const agentMap = new Map();
 

@@ -2,51 +2,54 @@ const mongoose = require("mongoose");
 const AutoIncrement = require("mongoose-sequence")(mongoose);
 
 const UserBuyedInsuranceSchema = new mongoose.Schema({
-  // this will be the key value
-  policyNumber: { type: String, unique: true },
+  // Auto-generated unique policy number
+  policyNumber: { type: Number, unique: true },
 
-  userId: {
+  // Link to User who bought the insurance
+  userId: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
+
+  // Link to Policy schema (Ensures valid policy selection)
+  policyId: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: "User",
+    ref: "Policy",
     required: true,
   },
 
   // Basic Personal Details (Stored at the time of purchase)
   personalDetails: {
-    fullName: { type: String, required: true },
-    dateOfBirth: { type: Date, required: true },
-    gender: { type: String, enum: ["Male", "Female", "Other"], required: true },
+    fullName: { type: String },
+    dateOfBirth: { type: Date },
+    gender: { type: String, enum: ["Male", "Female", "Other"] },
     aadharNumber: { type: String, required: true, unique: true },
     panNumber: { type: String, required: true, unique: true },
     address: {
-      street: { type: String, required: true },
-      city: { type: String, required: true },
-      state: { type: String, required: true },
-      country: { type: String, required: true },
-      pincode: { type: String, required: true },
+      street: { type: String },
+      city: { type: String },
+      state: { type: String },
+      country: { type: String },
+      pincode: { type: String },
     },
   },
 
   // Insurance Details
   insuranceDetails: {
-    // policyNumber: { type: String, required: true, unique: true },
-    policyStartDate: { type: Date, required: true },
-    policyEndDate: { type: Date, required: true },
-    sumAssured: { type: Number, required: true },
-    premiumAmount: { type: Number, required: true },
-    premiumPaymentFrequency: {
-      type: String,
-      enum: ["Monthly", "Quarterly", "Yearly"],
-      required: true,
-    },
+    policyStartDate: { type: Date },
+    policyEndDate: { type: Date },
+  },
+
+  // Policy Status (Active, Expired, Canceled)
+  policyStatus: {
+    type: String,
+    enum: ["Active", "Expired", "Canceled"],
+    default: "Active",
   },
 
   // Nominee Details
   nomineeDetails: {
-    name: { type: String, required: true },
-    relation: { type: String, required: true },
-    aadharNumber: { type: String, required: true },
-    phoneNumber: { type: String, required: true },
+    name: { type: String },
+    relation: { type: String },
+    aadharNumber: { type: String },
+    phoneNumber: { type: String },
   },
 
   // Allowed Hospitals (Predefined List)
@@ -54,29 +57,49 @@ const UserBuyedInsuranceSchema = new mongoose.Schema({
     {
       hospitalId: { type: mongoose.Schema.Types.ObjectId, ref: "Hospital" },
       hospitalName: { type: String },
-      location: { type: String },
     },
   ],
 
   // Medical History (Immutable at the time of insurance purchase)
   medicalHistory: [
     {
-      disease: { type: String, required: true },
-      treatment: { type: String },
+      disease: { type: String },
+      diagnosisDetails: { type: String },
+      severity: { type: String, enum: ["Mild", "Moderate", "Severe"] },
+      treatment: {
+        type: { type: String },
+        details: { type: String },
+        duration: { type: String },
+        outcome: { type: String },
+      },
       doctorName: { type: String },
+      doctorSpecialization: { type: String },
       hospitalName: { type: String },
       hospitalId: { type: mongoose.Schema.Types.ObjectId, ref: "Hospital" },
-      dateOfDiagnosis: { type: Date, required: true },
+      dateOfDiagnosis: { type: Date },
+      dateOfRecovery: { type: Date },
+      dateOfReport: { type: Date },
+      followUpRequired: { type: Boolean },
+      additionalNotes: { type: String },
     },
   ],
 
   // Regular Medicines
   regularMedicines: [
     {
-      medicineName: { type: String, required: true },
-      dosage: { type: String, required: true },
-      frequency: { type: Number, required: true }, // e.g :1,2
-      duration: { type: String, required: true }, // eg  : {"month","year"}
+      medicineName: { type: String },
+      genericName: { type: String },
+      dosage: { type: String },
+      frequency: { type: Number },
+      duration: { type: String },
+      purpose: { type: String },
+      sideEffects: [{ name: { type: String } }],
+      startDate: { type: Date },
+      endDate: { type: Date },
+      prescribedBy: { type: String },
+      isActive: { type: Boolean },
+      specialInstructions: { type: String },
+      interactionWarnings: [{ name: { type: String } }],
     },
   ],
 
@@ -87,7 +110,7 @@ const UserBuyedInsuranceSchema = new mongoose.Schema({
       enum: ["Credit Card", "Debit Card", "UPI", "Net Banking"],
       required: true,
     },
-    transactionId: { type: String, required: true, unique: true },
+    transactionId: { type: String, required: true },
     status: {
       type: String,
       enum: ["Success", "Pending", "Failed"],

@@ -1,5 +1,4 @@
 const mongoose = require("mongoose");
-const AutoIncrement = require("mongoose-sequence")(mongoose);
 
 const HospitalSubmittedDataSchema = new mongoose.Schema(
   {
@@ -106,6 +105,7 @@ const HospitalSubmittedDataSchema = new mongoose.Schema(
     ],
 
     policyDetails: {
+      policyNumber: { type: Number },
       policyStartDate: { type: Date },
       policyEndDate: { type: Date },
       sumAssured: { type: Number },
@@ -398,12 +398,6 @@ const HospitalSubmittedDataSchema = new mongoose.Schema(
   },
   { timestamps: true }
 );
-
-// HospitalSubmittedDataSchema.plugin(AutoIncrement, {
-//   inc_field: "policyNumber",
-//   start_seq: 1000,
-//   inc_amount: 1,
-// });
 
 module.exports = mongoose.model(
   "HospitalSubmittedData",

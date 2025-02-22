@@ -11,7 +11,7 @@ class DocumentProcessor {
     this.GEMINI_API_URL = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`;
   }
 
-  async processDocument(filePath, prompt, retries = 3, delay = 1000) {
+  async processDocument(filePath, prompt, retries = 5, delay = 2000) {
     try {
       const imageBuffer = fs.readFileSync(filePath);
       const mimeType = this.getMimeType(filePath);
@@ -51,9 +51,11 @@ class DocumentProcessor {
       extractedText = extractedText.replace(/```json\n?|\n?```/g, "").trim();
       return JSON.parse(extractedText);
     } catch (error) {
-      if (retries > 0) {
+      if (retries > 0 && error.response && error.response.status === 429) {
         console.log(
-          `Retrying... Attempts left: ${retries - 1}. Delay: ${delay}ms`
+          `Rate limit reached. Retrying... Attempts left: ${
+            retries - 1
+          }. Delay: ${delay}ms`
         );
         await new Promise((resolve) => setTimeout(resolve, delay)); // Wait for the delay
         return this.processDocument(filePath, prompt, retries - 1, delay * 2); // Exponential backoff

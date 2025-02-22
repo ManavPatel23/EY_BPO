@@ -6,6 +6,8 @@ import {
   FileText,
   CheckCircle,
   PlusCircle,
+  LogIn,
+  PersonStanding,
 } from "lucide-react";
 import { UserContext } from "./context/userContext";
 import Cookies from "js-cookie";
@@ -77,17 +79,40 @@ export function Sidebar({ className }) {
           label="Check Claim Status"
           isExpanded={isExpanded}
         />
-        <button
-          onClick={handleLogout}
-          className={cn(
-            "group flex w-full items-center rounded-lg p-3 text-red-500 transition-colors hover:bg-red-50"
-          )}
-        >
-          <LogOut className="h-6 w-6" />
-          {isExpanded && (
-            <span className="ml-2 text-base font-medium flex-1">Logout</span>
-          )}
-        </button>
+        {!user && (
+          <>
+            <NavItem
+              to="/hosp/login"
+              icon={LogIn}
+              label="Login"
+              isExpanded={isExpanded}
+            />
+            <NavItem
+              to="/hosp/register"
+              icon={PersonStanding}
+              label="Register"
+              isExpanded={isExpanded}
+            />
+          </>
+        )}
+
+        {user && (
+          <>
+            <button
+              onClick={handleLogout}
+              className={cn(
+                "group flex w-full items-center rounded-lg p-3 text-red-500 transition-colors hover:bg-red-50"
+              )}
+            >
+              <LogOut className="h-6 w-6" />
+              {isExpanded && (
+                <span className="ml-2 text-base font-medium flex-1">
+                  Logout
+                </span>
+              )}
+            </button>
+          </>
+        )}
       </nav>
 
       {/* Profile Section */}

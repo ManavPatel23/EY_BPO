@@ -3,6 +3,7 @@ const mongoose = require("mongoose");
 const dataMergers = {
   mergePolicyDetails: (existing, extracted) => {
     // Helper function to parse and validate dates
+
     const parseDate = (dateStr) => {
       if (!dateStr) return null;
       const date = new Date(dateStr);
@@ -17,6 +18,8 @@ const dataMergers = {
     };
 
     return {
+      policyNumber:
+        parseNumber(extracted.policyNumber) || existing.policyNumber || null,
       policyStartDate:
         parseDate(extracted.policyStartDate) ||
         existing.policyStartDate ||

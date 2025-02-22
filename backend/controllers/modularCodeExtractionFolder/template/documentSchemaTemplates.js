@@ -1,5 +1,6 @@
 const schemaTemplates = {
   policyDetailsTemplateSchema: {
+    policyNumber : "1223",
     policyStartDate: "2023-10-15",
     policyEndDate: "2023-10-15",
     sumAssured: 10,
