@@ -839,80 +839,6 @@ let moderateupdates = {
       },
     ],
   },
-  pastMedicalCheckupsDetails: {
-    patientDetails: {
-      name: "Rohan Verma",
-      gender: "Male",
-      bloodGroup: "B+",
-    },
-    checkupRecords: [
-      {
-        checkupId: "CHK2024-04-02Dr. Mehta",
-        checkupDate: "2024-04-02T00:00:00.000Z",
-        checkupType: "Cardiac Evaluation",
-        symptoms: [{ name: "Chest Pain" }, { name: "Shortness of Breath" }],
-        diagnosis: "Mild Coronary Artery Disease",
-        doctorName: "Dr. Mehta",
-        doctorSpecialization: "Cardiologist",
-        hospitalName: "Metro Heart Hospital",
-        vitalSigns: {
-          bloodPressure: "145/90",
-          temperature: 98.6,
-          pulseRate: 95,
-          respiratoryRate: 18,
-          oxygenSaturation: 98,
-        },
-        testsRecommended: [
-          {
-            testName: "ECG",
-            reason: "Irregular heartbeats observed",
-          },
-        ],
-        followUpDate: "2024-04-10T00:00:00.000Z",
-        recommendations: "Lifestyle changes and further tests.",
-      },
-    ],
-  },
-  pastMedicalRecordsDetails: {
-    records: [
-      {
-        recordId: "MRD-9856",
-        recordDate: "2023-12-15T00:00:00.000Z",
-        recordType: "Echocardiogram",
-        hospitalOrLabName: "Metro Heart Hospital",
-        resultSummary: "Mild heart valve leakage",
-        interpretation: "No immediate intervention needed",
-        criticalFindings: false,
-        recommendedFollowUp: "Regular monitoring every 6 months",
-      },
-    ],
-  },
-  operationDetails: {
-    surgeryName: "Heart Bypass Surgery",
-    surgeryDate: "2024-07-05T00:00:00.000Z",
-    surgeryType: "Cardiac",
-    surgeonName: "Dr. Gupta",
-    surgeonSpecialization: "Cardiothoracic Surgeon",
-    anesthesiologist: "Dr. Rao",
-    assistingSurgeons: [{ name: "Dr. Mehta" }],
-    preOpDiagnosisDetails: "70% blockage in left coronary artery.",
-    postOpDiagnosisDetails: "Successful bypass with normal heart function.",
-    anesthesiaType: "General Anesthesia",
-    operationDuration: 4,
-    complications: [{ name: "Minor swelling" }],
-    hospitalStayDuration: 5,
-    postOpCare: "Physiotherapy recommended.",
-    followUpInstructions: "Routine checkup after 1 month.",
-  },
-  doctorsNoteDetails: {
-    notes: "Patient recovering well from bypass surgery.",
-    assessment: "Stable condition, no complications observed.",
-    plan: "Regular follow-up visits required.",
-    recommendations: "Avoid heavy lifting for 3 months.",
-    writtenBy: "Dr. Gupta",
-    designation: "Cardiothoracic Surgeon",
-    dateWritten: "2024-07-10T00:00:00.000Z",
-  },
   regularMedicinesDetails: {
     patientDetails: {
       name: "Rajesh Kumar",
@@ -996,6 +922,80 @@ let moderateupdates = {
         interactionWarnings: [],
       },
     ],
+  },
+  operationDetails: {
+    surgeryName: "Heart Bypass Surgery",
+    surgeryDate: "2024-07-05T00:00:00.000Z",
+    surgeryType: "Cardiac",
+    surgeonName: "Dr. Gupta",
+    surgeonSpecialization: "Cardiothoracic Surgeon",
+    anesthesiologist: "Dr. Rao",
+    assistingSurgeons: [{ name: "Dr. Mehta" }],
+    preOpDiagnosisDetails: "70% blockage in left coronary artery.",
+    postOpDiagnosisDetails: "Successful bypass with normal heart function.",
+    anesthesiaType: "General Anesthesia",
+    operationDuration: 4,
+    complications: [{ name: "Minor swelling" }],
+    hospitalStayDuration: 5,
+    postOpCare: "Physiotherapy recommended.",
+    followUpInstructions: "Routine checkup after 1 month.",
+  },
+  pastMedicalCheckupsDetails: {
+    patientDetails: {
+      name: "Rohan Verma",
+      gender: "Male",
+      bloodGroup: "B+",
+    },
+    checkupRecords: [
+      {
+        checkupId: "CHK2024-04-02Dr. Mehta",
+        checkupDate: "2024-04-02T00:00:00.000Z",
+        checkupType: "Cardiac Evaluation",
+        symptoms: [{ name: "Chest Pain" }, { name: "Shortness of Breath" }],
+        diagnosis: "Mild Coronary Artery Disease",
+        doctorName: "Dr. Mehta",
+        doctorSpecialization: "Cardiologist",
+        hospitalName: "Metro Heart Hospital",
+        vitalSigns: {
+          bloodPressure: "145/90",
+          temperature: 98.6,
+          pulseRate: 95,
+          respiratoryRate: 18,
+          oxygenSaturation: 98,
+        },
+        testsRecommended: [
+          {
+            testName: "ECG",
+            reason: "Irregular heartbeats observed",
+          },
+        ],
+        followUpDate: "2024-04-10T00:00:00.000Z",
+        recommendations: "Lifestyle changes and further tests.",
+      },
+    ],
+  },
+  pastMedicalRecordsDetails: {
+    records: [
+      {
+        recordId: "MRD-9856",
+        recordDate: "2023-12-15T00:00:00.000Z",
+        recordType: "Echocardiogram",
+        hospitalOrLabName: "Metro Heart Hospital",
+        resultSummary: "Mild heart valve leakage",
+        interpretation: "No immediate intervention needed",
+        criticalFindings: false,
+        recommendedFollowUp: "Regular monitoring every 6 months",
+      },
+    ],
+  },
+  doctorsNoteDetails: {
+    notes: "Patient recovering well from bypass surgery.",
+    assessment: "Stable condition, no complications observed.",
+    plan: "Regular follow-up visits required.",
+    recommendations: "Avoid heavy lifting for 3 months.",
+    writtenBy: "Dr. Gupta",
+    designation: "Cardiothoracic Surgeon",
+    dateWritten: "2024-07-10T00:00:00.000Z",
   },
   policyDetails: {
     policyStartDate: "2023-01-01T00:00:00.000Z",
@@ -1410,230 +1410,80 @@ let legimateCase = {
   },
 };
 
-if (change.operationType === "insert") {
-  const doc = change.fullDocument;
-  let updates = {};
+const samplePolicyData = {
+  policyNumber: "POL789012",
+  purchaseDate: "2022-01-15",
+  medicalHistory: [
+    {
+      condition: "Seasonal Allergies",
+      diagnosedDate: "2019-05-10",
+      status: "Ongoing",
+      details: "Mild seasonal symptoms",
+    },
+  ],
+  regularMedicines: [
+    {
+      name: "Cetirizine",
+      dosage: "10mg",
+      frequency: "Once daily",
+      startDate: "2019-05-15",
+    },
+  ],
+};
 
-  // Process patient details if present
-  if (doc.patientDetailsDocuments?.length > 0) {
-    // Get JSON response from processDocuments
-    const patientDetailsJson = await this.processDocuments(
-      doc.patientDetailsDocuments,
-      "PatientDetails",
-      patientDetailsTemplate,
-      patientDetailsTemplateSchema,
-      dataMergers.mergePatientDetails
-    );
-
-    // Convert to JSON if it isn't already
-    updates = {
-      ...updates, // Preserve any existing data
-      patientPersonalDetails: JSON.parse(JSON.stringify(patientDetailsJson)),
-    };
-
-    console.log("UPDATE SUCCESSFUL For Patient Personal Details\n");
-  }
-  if (doc.billsDocuments?.length > 0) {
-    const billingJson = await this.processDocuments(
-      doc.billsDocuments,
-      "BillingDetails",
-      billingDetailsTemplate,
-      billingDetailsTemplateSchema,
-      dataMergers.mergeBillingDetails
-    );
-    updates = {
-      ...updates,
-      billingDetails: JSON.parse(JSON.stringify(billingJson)),
-    };
-    console.log("UPDATE SUCCESSFUL For Billing Details\n");
-  }
-  // Process prescription details if present
-  if (doc.prescriptionsDocuments?.length > 0) {
-    const prescriptionJson = await this.processDocuments(
-      doc.prescriptionsDocuments,
-      "PrescriptionDetails",
-      prescriptionsDetailsTemplate,
-      prescriptionsDetailsTemplateSchema,
-      dataMergers.mergePrescriptionDetails
-    );
-    updates = {
-      ...updates,
-      prescriptionsDetails: JSON.parse(JSON.stringify(prescriptionJson)),
-    };
-    console.log("UPDATE SUCCESSFUL For Prescription Details\n");
-  }
-  // Process medical history details if present
-  if (doc.medicalHistoryDocuments?.length > 0) {
-    const medicalHistoryJson = await this.processDocuments(
-      doc.medicalHistoryDocuments,
-      "MedicalHistoryDetails",
-      medicalHistoryDetailsTemplate,
-      medicalHistoryDetailsTemplateSchema,
-      dataMergers.mergeMedicalHistoryDetails
-    );
-    updates = {
-      ...updates,
-      medicalHistoryDetails: JSON.parse(JSON.stringify(medicalHistoryJson)),
-    };
-    console.log("UPDATE SUCCESSFUL For Medical History Details\n");
-  }
-  // Process past medical checkups details if present
-  if (doc.patientPastMedicalCheckupsDocuments?.length > 0) {
-    const checkupsJson = await this.processDocuments(
-      doc.patientPastMedicalCheckupsDocuments,
-      "MedicalCheckupsDetails",
-      pastMedicalCheckupsDetailsTemplate,
-      pastMedicalCheckupsDetailsTemplateSchema,
-      dataMergers.mergeMedicalCheckupsDetails
-    );
-    updates = {
-      ...updates,
-      pastMedicalCheckupsDetails: JSON.parse(JSON.stringify(checkupsJson)),
-    };
-    console.log("UPDATE SUCCESSFUL For Medical Checkups Details\n");
-  }
-  // Process past medical records details if present
-  if (doc.patientPastMedicalRecordsDocuments?.length > 0) {
-    const recordsJson = await this.processDocuments(
-      doc.patientPastMedicalRecordsDocuments,
-      "MedicalRecordsDetails",
-      pastMedicalRecordsDetailsTemplate,
-      pastMedicalRecordsDetailsTemplateSchema,
-      dataMergers.mergeMedicalRecordsDetails
-    );
-    updates = {
-      ...updates,
-      pastMedicalRecordsDetails: JSON.parse(JSON.stringify(recordsJson)),
-    };
-    console.log("UPDATE SUCCESSFUL For Medical Records Details\n");
-  }
-  // Process regular medicines details if present
-  if (doc.regularMedicinesOfPatientDocuments?.length > 0) {
-    const medicinesJson = await this.processDocuments(
-      doc.regularMedicinesOfPatientDocuments,
-      "RegularMedicinesDetails",
-      regularMedicinesDetailsTemplate,
-      regularMedicinesDetailsTemplateSchema,
-      dataMergers.mergeRegularMedicinesDetails
-    );
-    updates = {
-      ...updates,
-      regularMedicinesDetails: JSON.parse(JSON.stringify(medicinesJson)),
-    };
-    console.log("UPDATE SUCCESSFUL For Regular Medicines Details\n");
-  }
-  // Process operation details if present
-  if (doc.operationDetailDocuments?.length > 0) {
-    const operationJson = await this.processDocuments(
-      doc.operationDetailDocuments,
-      "OperationDetails",
-      operationDetailsTemplate,
-      operationDetailsTemplateSchema,
-      dataMergers.mergeOperationDetails
-    );
-    updates = {
-      ...updates,
-      operationDetails: JSON.parse(JSON.stringify(operationJson)),
-    };
-    console.log("UPDATE SUCCESSFUL For Operation Details\n");
-  }
-  // Process doctor's note details if present
-  if (doc.doctorsNoteDocuments?.length > 0) {
-    const doctorsNoteJson = await this.processDocuments(
-      doc.doctorsNoteDocuments,
-      "DoctorsNoteDetails",
-      doctorNotesDetailsTemplate,
-      doctorNotesDetailsTemplateSchema,
-      dataMergers.mergeDoctorNoteDetails
-    );
-    updates = {
-      ...updates,
-      doctorsNoteDetails: JSON.parse(JSON.stringify(doctorsNoteJson)),
-    };
-    console.log("UPDATE SUCCESSFUL For Doctor's Note Details\n");
-  }
-  // Process policy details if present
-  if (doc.policyDocuments?.length > 0) {
-    const policyJson = await this.processDocuments(
-      doc.policyDocuments,
-      "PolicyDetails",
-      policyDetailsTemplate,
-      policyDetailsTemplateSchema,
-      dataMergers.mergePolicyDetails
-    );
-    updates = {
-      ...updates,
-      policyDetails: JSON.parse(JSON.stringify(policyJson)),
-    };
-    console.log("UPDATE SUCCESSFUL For Policy Details\n");
-  }
-  // Final logging of the complete updates object
-  console.log("JSON DATA:", JSON.stringify(updates, null, 2));
-
-  const processor = new GeminiProcessor(process.env.GEMINI_API_KEY);
-
-  const patientDetailsComparison = {
-    billingPatientDetails: updates.billingDetails?.patientDetails || null,
-    prescriptionPatientDetails:
-      updates.prescriptionsDetails?.patientDetails || null,
-    medicalHistoryPatientDetails:
-      updates.medicalHistoryDetails?.patientDetails || null,
-    checkupsPatientDetails:
-      updates.pastMedicalCheckupsDetails?.patientDetails || null,
-    recordsPatientDetails:
-      updates.pastMedicalRecordsDetails?.patientDetails || null,
-    regularMedicinesPatientDetails:
-      updates.regularMedicinesDetails?.patientDetails || null,
-    operationPatientDetails: updates.operationDetails?.patientDetails || null,
-    doctorsNotePatientDetails:
-      updates.doctorsNoteDetails?.patientDetails || null,
-  };
-
-  console.log("Patient details comaprison ", patientDetailsComparison);
-
-  const promptForConsistencyCheck = consistenyDetailsCheck(
-    patientDetailsComparison
-  );
-  const resultForConsistencyCheck = await processor.processPrompt(
-    promptForConsistencyCheck
-  );
-  console.log(
-    "resultForConsistencyCheck",
-    JSON.stringify(resultForConsistencyCheck, null, 2)
-  );
-
-  const extractedData = extractRelevantMedicalData(updates);
-  console.log("Extracted Data", extractedData);
-
-  const promptForRelevantMedicalData = fraudDetectionCheck(extractedData);
-
-  const resultForRelevantData = await processor.processPrompt(
-    promptForRelevantMedicalData
-  );
-
-  console.log(
-    "resultForRelevantData",
-    JSON.stringify(resultForRelevantData, null, 2)
-  );
-
-  const extractedDataOfBilling = extractRelevantBillingData(updates);
-  console.log("Extracted Data", extractedDataOfBilling);
-
-  const promptForRelevantBillingData = generatePhantomBillingPrompt(
-    extractedDataOfBilling
-  );
-
-  const resultForRelevantBillingData = await processor.processPrompt(
-    promptForRelevantBillingData
-  );
-
-  console.log(
-    "resultForRelevantBillingData",
-    JSON.stringify(resultForRelevantBillingData, null, 2)
-  );
-  // Update document with all extracted details
-  if (Object.keys(updates).length > 0) {
-    await HospitalSubmitted.findByIdAndUpdate(doc._id, updates);
-    console.log("PUSHED in DB");
-  }
-}
+const sampleClaimData = {
+  claimNumber: "CLM456789",
+  claimDate: "2024-01-20",
+  medicalHistory: [
+    {
+      condition: "Seasonal Allergies",
+      diagnosedDate: "2019-05-10",
+      status: "Ongoing",
+      details: "Mild seasonal symptoms",
+    },
+    {
+      condition: "Coronary Artery Disease", // Existed before policy but not disclosed
+      diagnosedDate: "2018-03-15",
+      status: "Ongoing",
+      details: "Multiple stent placements in 2018",
+    },
+    {
+      condition: "Type 2 Diabetes", // Existed before policy but not disclosed
+      diagnosedDate: "2017-08-22",
+      status: "Ongoing",
+      details: "Diagnosed during routine checkup",
+    },
+    {
+      condition: "Chronic Kidney Disease", // Related to undisclosed diabetes
+      diagnosedDate: "2019-11-30",
+      status: "Ongoing",
+      details: "Stage 2, likely due to diabetes",
+    },
+  ],
+  regularMedicines: [
+    {
+      name: "Cetirizine",
+      dosage: "10mg",
+      frequency: "Once daily",
+      startDate: "2019-05-15",
+    },
+    {
+      name: "Metformin", // Not disclosed but started before policy
+      dosage: "1000mg",
+      frequency: "Twice daily",
+      startDate: "2017-09-01",
+    },
+    {
+      name: "Clopidogrel", // Not disclosed but started before policy
+      dosage: "75mg",
+      frequency: "Once daily",
+      startDate: "2018-03-20",
+    },
+    {
+      name: "Atorvastatin", // Not disclosed but started before policy
+      dosage: "40mg",
+      frequency: "Once daily",
+      startDate: "2018-03-20",
+    },
+  ],
+};

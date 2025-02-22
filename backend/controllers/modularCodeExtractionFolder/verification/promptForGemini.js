@@ -210,6 +210,64 @@ Output Format:
 
 Provide the final legitimacy score along with the claim approval decision in a structured format.`;
   },
+
+  generateMedicalVerificationPrompt: (policyData, claimData) => {
+    return `Analyze ONLY what medical conditions and medicines existed BEFORE the policy purchase date and verify if they were properly disclosed. Any conditions or medications that started after the policy purchase date should NOT be considered as non-disclosures.
+  
+    INSURANCE POLICY DATA (At time of policy purchase):
+    ${JSON.stringify(policyData, null, 2)}
+  
+    CURRENT CLAIM DATA:
+    ${JSON.stringify(claimData, null, 2)}
+  
+    Instructions for Analysis:
+    1. First, identify the policy purchase date
+    
+    2. For medical history verification, ONLY check:
+       - Medical conditions that existed BEFORE policy purchase date
+       - Compare these pre-existing conditions against what was disclosed
+       - Ignore any conditions that developed after policy purchase
+       - Focus only on what should have been known and disclosed at purchase time
+  
+    3. For regular medicines verification, ONLY check:
+       - Medications being taken BEFORE policy purchase date
+       - Compare these pre-existing medications against what was disclosed
+       - Ignore any medications started after policy purchase
+       - Focus only on medicines that should have been disclosed at purchase time
+  
+    4. Consider reasonable variations:
+       - Minor differences in condition names/terminology
+       - Slightly different medication brand names
+       - Normal variations in reported dates within a reasonable range
+  
+    Provide analysis in this exact JSON format:
+    {
+      "verificationScore": <0-100>,
+      "nonDisclosures": [
+        {
+          "category": <"Medical History" | "Regular Medicines">,
+          "severity": <"Low" | "Medium" | "High" | "Critical">,
+          "description": <string - ONLY include conditions/medicines that existed before policy purchase>,
+          "impact": <string>
+        }
+      ],
+      "verificationSummary": {
+        "consistencyLevel": <"High" | "Moderate" | "Low">,
+        "criticalFindings": <string - ONLY about pre-policy conditions/medicines>,
+        "recommendedAction": <"Approve" | "Review" | "Investigate" | "Reject">,
+        "explanation": <string - focus ONLY on what should have been disclosed at purchase>
+      }
+    }
+  
+    Base the verification score ONLY on pre-policy disclosures:
+    - 90-100: All pre-existing conditions and medicines were properly disclosed
+    - 70-89: Minor omissions of pre-existing conditions/medicines
+    - 50-69: Notable missing disclosures of pre-existing conditions/medicines
+    - 30-49: Significant non-disclosure of pre-existing conditions/medicines
+    - 0-29: Critical failure to disclose major pre-existing conditions/medicines
+  
+    IMPORTANT: Do NOT count any conditions or medications that started after the policy purchase date as non-disclosures.`;
+  },
 };
 
 module.exports = promptsForGemini;

@@ -1,5 +1,8 @@
 // services/documentWatcher.js
 const {
+  UserBuyedInsurance,
+} = require("../../../models/UserBuyedInsuranceSchema.js");
+const {
   billingDetailsTemplateSchema,
   patientDetailsTemplateSchema,
   prescriptionsDetailsTemplateSchema,
@@ -34,6 +37,7 @@ const {
   fraudDetectionCheck,
   generatePhantomBillingPrompt,
   giveOverallScorePrompt,
+  generateMedicalVerificationPrompt,
 } = require("../verification/promptForGemini.js");
 const dataMergers = require("./dataMergers.js");
 const extractors = require("./documentExtractors.js");
@@ -79,6 +83,9 @@ class DocumentWatcher {
         if (change.operationType === "insert") {
           const doc = change.fullDocument;
           let updates = {};
+          // Determine validation status based on final score
+          let validationStatus;
+          let summaryAfterVerification;
 
           const processor = new GeminiProcessor(process.env.GEMINI_API_KEY);
 
@@ -104,6 +111,32 @@ class DocumentWatcher {
 
           const policyNumberProvided = updates.policyDetails.policyNumber;
 
+          const userBuyedInsurancePolicyDetails =
+            await UserBuyedInsurance.findOne({
+              policyNumber: policyNumberProvided,
+            });
+
+          console.log(
+            "userBuyedInsurancePolicyDetails",
+            userBuyedInsurancePolicyDetails
+          );
+
+          // if user didnt buyed insurance return
+          if (!userBuyedInsurancePolicyDetails) {
+            validationStatus = "FAILED";
+            summaryAfterVerification =
+              "Policy Details Provided Doesn't Match . Provide Proper Policy Details";
+
+            updates = {
+              ...updates,
+              validationStatus,
+              summaryAfterVerification,
+            };
+            await HospitalSubmitted.findByIdAndUpdate(doc._id, updates);
+            console.log("PUSHED in DB After Fail");
+
+            return;
+          }
 
           // Process patient details if present
           if (doc.patientDetailsDocuments?.length > 0) {
@@ -175,6 +208,74 @@ class DocumentWatcher {
             };
             console.log("UPDATE SUCCESSFUL For Medical History Details\n");
           }
+
+          // Process regular medicines details if present
+          if (doc.regularMedicinesOfPatientDocuments?.length > 0) {
+            const medicinesJson = await this.processDocuments(
+              doc.regularMedicinesOfPatientDocuments,
+              "RegularMedicinesDetails",
+              regularMedicinesDetailsTemplate,
+              regularMedicinesDetailsTemplateSchema,
+              dataMergers.mergeRegularMedicinesDetails
+            );
+            updates = {
+              ...updates,
+              regularMedicinesDetails: JSON.parse(
+                JSON.stringify(medicinesJson)
+              ),
+            };
+            console.log("UPDATE SUCCESSFUL For Regular Medicines Details\n");
+          }
+
+          const policyDataForMedVerification = {
+            policyStartDate:
+              userBuyedInsurancePolicyDetails.insuranceDetails.policyStartDate,
+            regularMedicines: {
+              ...userBuyedInsurancePolicyDetails.regularMedicines,
+            },
+            medicalHistory: {
+              ...userBuyedInsurancePolicyDetails.medicalHistory,
+            },
+          };
+
+          const claimDataForMedVerification = {
+            medicalHistory: {
+              ...updates.medicalHistoryDetails.hospitalRecords,
+            },
+            regularMedicines: { ...updates.regularMedicinesDetails.medicines },
+          };
+
+          const promptForMedVerification = generateMedicalVerificationPrompt(
+            policyDataForMedVerification,
+            claimDataForMedVerification
+          );
+          const resultAfterMedVerification = await processor.processPrompt(
+            promptForMedVerification
+          );
+          console.log(
+            "resultAfterMedVerification done ",
+            resultAfterMedVerification
+          );
+
+          // if user didnt buyed insurance return
+          if (resultAfterMedVerification.verificationScore < 50) {
+            validationStatus = "FAILED";
+            summaryAfterVerification = JSON.stringify(
+              resultAfterMedVerification,
+              null,
+              2
+            );
+            updates = {
+              ...updates,
+              validationStatus,
+              summaryAfterVerification,
+            };
+            await HospitalSubmitted.findByIdAndUpdate(doc._id, updates);
+            console.log("PUSHED in DB After Medical Verification Fail");
+
+            return;
+          }
+
           // Process past medical checkups details if present
           if (doc.patientPastMedicalCheckupsDocuments?.length > 0) {
             const checkupsJson = await this.processDocuments(
@@ -208,23 +309,6 @@ class DocumentWatcher {
               ),
             };
             console.log("UPDATE SUCCESSFUL For Medical Records Details\n");
-          }
-          // Process regular medicines details if present
-          if (doc.regularMedicinesOfPatientDocuments?.length > 0) {
-            const medicinesJson = await this.processDocuments(
-              doc.regularMedicinesOfPatientDocuments,
-              "RegularMedicinesDetails",
-              regularMedicinesDetailsTemplate,
-              regularMedicinesDetailsTemplateSchema,
-              dataMergers.mergeRegularMedicinesDetails
-            );
-            updates = {
-              ...updates,
-              regularMedicinesDetails: JSON.parse(
-                JSON.stringify(medicinesJson)
-              ),
-            };
-            console.log("UPDATE SUCCESSFUL For Regular Medicines Details\n");
           }
           // Process operation details if present
           if (doc.operationDetailDocuments?.length > 0) {
@@ -357,10 +441,6 @@ class DocumentWatcher {
             "geminiOutputCheckData",
             JSON.stringify(geminiOutputCheckData, null, 2)
           );
-
-          // Determine validation status based on final score
-          let validationStatus;
-          let summaryAfterVerification;
 
           if (finalScore >= 80) {
             validationStatus = "VERIFIED";
