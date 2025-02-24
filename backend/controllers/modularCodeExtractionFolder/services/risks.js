@@ -500,6 +500,7 @@ let highlyriskupdates = {
     policyEndDate: "2028-12-31T00:00:00.000Z",
     sumAssured: 1500000,
     premiumAmount: 25000,
+    policyNumber: 1234567890,
   },
 };
 
@@ -1002,6 +1003,7 @@ let moderateupdates = {
     policyEndDate: "2028-12-31T00:00:00.000Z",
     sumAssured: 1500000,
     premiumAmount: 25000,
+    policyNumber: 1234567890,
   },
 };
 
@@ -1407,6 +1409,7 @@ let legimateCase = {
     policyEndDate: "2028-12-31T00:00:00.000Z",
     sumAssured: 1500000,
     premiumAmount: 25000,
+    policyNumber: 1234567890,
   },
 };
 
