@@ -146,6 +146,8 @@ const GEMINI_API_URL = `https://generativelanguage.googleapis.com/v1beta/models/
 //   }
 // });
 
+console.log("Test log");
+
 app.post("/get-hospitals", async (req, res) => {
   try {
     const { city } = req.body;
