@@ -16,6 +16,9 @@ const callBetweenSchema = new mongoose.Schema(
     clientCallRecord: {
       type: String, // Store the file path of the client's recording
     },
+    roomCallRecord: {
+      type: String,
+    },
     roomId: {
       type: String,
     },

@@ -3,6 +3,8 @@ import io from "socket.io-client";
 import { ZegoUIKitPrebuilt } from "@zegocloud/zego-uikit-prebuilt";
 import { BACKEND_URL_GENERAL, BACKEND_URL } from "../constant";
 import { UserContext } from "../context/userContext";
+import DatePicker from "react-datepicker"; // You'll need to install this package
+import "react-datepicker/dist/react-datepicker.css";
 
 const APP_ID = 1732474976;
 const SERVER_SECRET = "1359f8ebc4b18686a67903a028ec194a";
@@ -13,12 +15,25 @@ function AgentCallingPage() {
   const [callConnected, setCallConnected] = useState(false);
   const [roomId, setRoomId] = useState(null);
   const [recordedAudio, setRecordedAudio] = useState({});
+  const [roomAudio, setRoomAudio] = useState(null);
   const socketRef = useRef(null);
   const mediaRecorderRef = useRef({});
+  const roomRecorderRef = useRef(null);
   const audioChunksRef = useRef({});
+  const roomAudioChunksRef = useRef([]);
   const { user } = useContext(UserContext);
   const [agentAudioAnalyzed, setAgentAudioAnalyzed] = useState("");
   const [clientAudioAnalyzed, setClientAudioAnalyzed] = useState("");
+  const [callEnded, setCallEnded] = useState(false);
+  const [showScheduler, setShowScheduler] = useState(false);
+  const [scheduleDate, setScheduleDate] = useState(getTomorrowDate());
+  const [scheduling, setScheduling] = useState(false);
+
+  function getTomorrowDate() {
+    const tomorrow = new Date();
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    return tomorrow;
+  }
 
   useEffect(() => {
     socketRef.current = io(BACKEND_URL_GENERAL, { transports: ["websocket"] });
@@ -64,10 +79,13 @@ function AgentCallingPage() {
 
           onJoinRoom: () => {
             startRecording(user._id);
+            startRoomRecording();
           },
 
           onLeaveRoom: () => {
             stopRecording(user._id);
+            stopRoomRecording();
+            setCallEnded(true);
           },
         });
       }, 2000);
@@ -131,6 +149,80 @@ function AgentCallingPage() {
       .catch((error) =>
         console.error("Error starting audio recording:", error)
       );
+  };
+
+  // Function to record the entire room audio
+  const startRoomRecording = () => {
+    // Get audio context and create a merger for all audio in the call
+    const audioContext = new (window.AudioContext ||
+      window.webkitAudioContext)();
+    const destination = audioContext.createMediaStreamDestination();
+
+    // This is a simplified approach - in a real implementation, you would need to
+    // get all audio streams from Zego SDK, but here we'll use what's available
+    navigator.mediaDevices
+      .getUserMedia({ audio: true })
+      .then((stream) => {
+        // Create a source from the stream
+        const source = audioContext.createMediaStreamSource(stream);
+        source.connect(destination);
+
+        // Create a recorder for the combined stream
+        const roomRecorder = new MediaRecorder(destination.stream);
+        roomRecorderRef.current = roomRecorder;
+
+        roomRecorder.ondataavailable = (event) => {
+          roomAudioChunksRef.current.push(event.data);
+        };
+
+        roomRecorder.onstop = async () => {
+          const audioBlob = new Blob(roomAudioChunksRef.current, {
+            type: "audio/mp3",
+          });
+          const roomAudioFile = new File(
+            [audioBlob],
+            `room_${roomId}_recording.mp3`,
+            {
+              type: "audio/mp3",
+            }
+          );
+
+          setRoomAudio(URL.createObjectURL(audioBlob));
+
+          // Upload room audio
+          await uploadRoomAudio(roomAudioFile);
+        };
+
+        roomRecorder.start();
+      })
+      .catch((error) => console.error("Error starting room recording:", error));
+  };
+
+  const stopRoomRecording = () => {
+    if (
+      roomRecorderRef.current &&
+      roomRecorderRef.current.state === "recording"
+    ) {
+      roomRecorderRef.current.stop();
+    }
+  };
+
+  const uploadRoomAudio = async (audioFile) => {
+    try {
+      const formData = new FormData();
+      formData.append("audio", audioFile);
+      formData.append("roomId", roomId);
+
+      const response = await fetch(`${BACKEND_URL}/call/upload-room-audio`, {
+        method: "POST",
+        body: formData,
+      });
+
+      const data = await response.json();
+      console.log("Room audio uploaded:", data);
+    } catch (error) {
+      console.error("Error uploading room audio:", error);
+    }
   };
 
   const stopRecording = (userId) => {
@@ -198,6 +290,46 @@ function AgentCallingPage() {
       link.href = audioUrl;
       link.download = `${userId}_recorded_audio.mp3`;
       link.click();
+    }
+  };
+
+  const downloadRoomAudio = () => {
+    if (roomAudio) {
+      const link = document.createElement("a");
+      link.href = roomAudio;
+      link.download = `room_${roomId}_recording.mp3`;
+      link.click();
+    }
+  };
+
+  const scheduleFollowUp = async () => {
+    try {
+      setScheduling(true);
+
+      const scheduleData = {
+        agentId: user._id,
+        clientId: otherPartyId,
+        roomCallAudio: roomId, // This assumes the backend can use roomId to find the recording
+        scheduleDate: scheduleDate.toISOString(),
+      };
+
+      const response = await fetch(`${BACKEND_URL}/call/schedule/call`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(scheduleData),
+      });
+
+      const data = await response.json();
+      console.log("Follow-up scheduled:", data);
+
+      // Close scheduler UI after successful scheduling
+      setShowScheduler(false);
+    } catch (error) {
+      console.error("Error scheduling follow-up:", error);
+    } finally {
+      setScheduling(false);
     }
   };
 
@@ -280,6 +412,24 @@ function AgentCallingPage() {
             </div>
           )}
 
+          {/* Display Room Recording */}
+          {roomAudio && (
+            <div className="bg-gray-100 p-4 rounded-lg mb-4">
+              <p className="font-medium text-black">
+                Room Recording (Both Agent & Client):
+              </p>
+              <audio controls className="w-full">
+                <source src={roomAudio} type="audio/mp3" />
+              </audio>
+              <button
+                onClick={downloadRoomAudio}
+                className="mt-2 bg-purple-500 text-white py-2 px-4 rounded hover:bg-purple-600"
+              >
+                Download Room Audio
+              </button>
+            </div>
+          )}
+
           {/* Display Client Emotion Analysis */}
           {clientAudioAnalyzed && (
             <div className="bg-gray-100 p-4 rounded-lg mb-4">
@@ -289,6 +439,58 @@ function AgentCallingPage() {
               </pre>
             </div>
           )}
+        </div>
+      )}
+
+      {/* Schedule Follow-up UI - shown after call ends */}
+      {callEnded && !showScheduler && (
+        <div className="mt-4">
+          <button
+            onClick={() => setShowScheduler(true)}
+            className="bg-green-500 text-white py-2 px-6 rounded-lg hover:bg-green-600 font-medium"
+          >
+            Schedule Follow-up
+          </button>
+        </div>
+      )}
+
+      {/* Scheduler with Date Picker */}
+      {showScheduler && (
+        <div className="mt-4 p-6 bg-gray-800 rounded-lg">
+          <h3 className="text-xl font-medium mb-4">Schedule Follow-up Call</h3>
+
+          <div className="mb-4">
+            <label className="block text-sm font-medium mb-2">
+              Select Date and Time:
+            </label>
+            <DatePicker
+              selected={scheduleDate}
+              onChange={(date) => setScheduleDate(date)}
+              showTimeSelect
+              dateFormat="MMMM d, yyyy h:mm aa"
+              minDate={new Date()}
+              className="p-2 rounded w-full text-black"
+            />
+          </div>
+
+          <div className="flex space-x-4">
+            <button
+              onClick={scheduleFollowUp}
+              disabled={scheduling}
+              className={`bg-blue-500 text-white py-2 px-6 rounded hover:bg-blue-600 ${
+                scheduling ? "opacity-70 cursor-not-allowed" : ""
+              }`}
+            >
+              {scheduling ? "Scheduling..." : "Follow Up"}
+            </button>
+
+            <button
+              onClick={() => setShowScheduler(false)}
+              className="bg-gray-500 text-white py-2 px-6 rounded hover:bg-gray-600"
+            >
+              Cancel
+            </button>
+          </div>
         </div>
       )}
     </div>

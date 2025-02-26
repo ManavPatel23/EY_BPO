@@ -118,7 +118,6 @@ model2 = whisper.load_model("base")  # Options: tiny, base, small, medium, large
 @app.route("/transcribe", methods=["POST"])
 def transcribe_audio():
     if "audio" not in request.files:
-        print("We are here")
         return jsonify({"error": "No audio file uploaded"}), 400
 
     audio_file = request.files["audio"]
