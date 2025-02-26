@@ -10,6 +10,13 @@ import { UserContext } from "./context/userContext";
 import ClaimSubmitPage from "./pages/ClaimSubmitPage";
 import SeeAllClaimSubmitted from "./pages/SeeAllClaimSubmitted";
 import { Sidebar } from "./Sidebar";
+import VerifyFace from "./pages/VerifyFace";
+import VerifyLocation from "./pages/VerifyLocation";
+import ClaimDetails from "./pages/ClaimDetails";
+import HomeForFaceAndLoc from "./pages/HomeForFaceAndLoc";
+import CallingPage from "./pages/CallingPage";
+import UserCallingPage from "./pages/UserCallingPage";
+import AgentCallingPage from "./pages/AgentCallingPage";
 
 function App() {
   const { setUser, user, setIsAuthen, setLoading, setError, loading } =
@@ -44,10 +51,21 @@ function App() {
             <Routes>
               <Route path="/claim" element={<ClaimSubmitPage />} />
               <Route path="/" element={<HomePage />} />
+              <Route path="/verify/face/:claimId" element={<VerifyFace />} />
+              <Route
+                path="/verify/location/:claimId"
+                element={<VerifyLocation />}
+              />
+              <Route
+                path="/claim-details/:claimId"
+                element={<ClaimDetails />}
+              />
+              <Route path="/call" element={<CallingPage />} />
+              <Route path="/user/call" element={<UserCallingPage />} />
+              <Route path="/agent/call" element={<AgentCallingPage />} />
               <Route path="/all-claims" element={<SeeAllClaimSubmitted />} />
               <Route path="/hosp/login" element={<LoginPage />} />
               <Route path="/hosp/register" element={<SignUpPage />} />
-              <Route path="*" element={<Navigate to="/" />} />
             </Routes>
           </div>
         </div>

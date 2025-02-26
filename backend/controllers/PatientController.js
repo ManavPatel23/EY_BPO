@@ -81,4 +81,48 @@ const buyPolicy = async (req, res) => {
   }
 };
 
-module.exports = { buyPolicy };
+// Upload and update image path
+const uploadImageOfPolicy = async (req, res) => {
+  try {
+    const { pId } = req.params;
+
+    // Check if file exists
+    if (!req.file) {
+      return res.status(400).json({
+        success: false,
+        message: "No image uploaded",
+      });
+    }
+
+    // Get file path
+    const referenceImagePath = req.file.filename;
+
+    // Find and update the policy document
+    const updatedPolicy = await UserBuyedInsurance.findByIdAndUpdate(
+      pId,
+      { referenceImage: referenceImagePath },
+      { new: true }
+    );
+
+    if (!updatedPolicy) {
+      return res.status(404).json({
+        success: false,
+        message: "Policy not found",
+      });
+    }
+
+    return res.status(200).json({
+      success: true,
+      message: "Image uploaded successfully!",
+      updatedPolicy,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      message: "Error uploading image",
+      error: error.message,
+    });
+  }
+};
+
+module.exports = { buyPolicy, uploadImageOfPolicy };

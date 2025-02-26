@@ -39,7 +39,7 @@ const LoginPage = () => {
     setError("");
 
     try {
-      const response = await axios.post(`${BACKEND_URL}/hosp/login`, formData, {
+      const response = await axios.post(`${BACKEND_URL}/user/login`, formData, {
         withCredentials: true,
       });
 

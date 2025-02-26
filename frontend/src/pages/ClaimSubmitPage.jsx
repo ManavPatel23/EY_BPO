@@ -99,7 +99,6 @@ const ClaimSubmitPage = () => {
         {
           headers: {
             Authorization: token ? `Bearer ${token}` : "",
-            "ngrok-skip-browser-warning": "skip-browser-warning",
           },
         }
       );

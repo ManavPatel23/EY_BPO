@@ -15,13 +15,15 @@ const UserBuyedInsuranceSchema = new mongoose.Schema({
     required: true,
   },
 
+  referenceImage: { type: String },
+
   // Basic Personal Details (Stored at the time of purchase)
   personalDetails: {
     fullName: { type: String },
     dateOfBirth: { type: Date },
     gender: { type: String, enum: ["Male", "Female", "Other"] },
-    aadharNumber: { type: String, required: true, unique: true },
-    panNumber: { type: String, required: true, unique: true },
+    aadharNumber: { type: String, required: true },
+    panNumber: { type: String, required: true },
     address: {
       street: { type: String },
       city: { type: String },

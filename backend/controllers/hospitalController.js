@@ -41,7 +41,7 @@ const uploadDocumentsForClaim = async (req, res) => {
         ),
         operationDetailDocuments: extractFilePaths("operationDetailDocuments"),
         doctorsNoteDocuments: extractFilePaths("doctorsNoteDocuments"),
-        hospitalMemberId: req.user._id,
+        patientId: req.user._id,
       });
 
       await hospitalDocument.save();
@@ -173,12 +173,12 @@ const getUserDetails = async (req, res) => {
 
 const getHospClaims = async (req, res) => {
   try {
-    // Find all claims where hospitalMemberId matches req.user._id
-    const id = req.params.id;
+    // Find all claims where patientId matches req.user._id
     const claims = await HospitalSubmittedSchema.find({
-      hospitalMemberId: id,
+      patientId: req.user._id,
     })
-      .populate("hospitalMemberId", "name email")
+      .populate("patientId", "name email")
+      .populate("hospitalId", "hospitalName")
       .sort({ timestamp: -1 });
 
     // If no claims found
@@ -191,13 +191,21 @@ const getHospClaims = async (req, res) => {
 
     const extractedClaims = claims.map((claim) => ({
       validationStatus: claim.validationStatus,
-      hospitalMemberId: {
-        _id: claim.hospitalMemberId._id,
-        name: claim.hospitalMemberId.name,
-        email: claim.hospitalMemberId.email,
+      referenceImage: `${req.protocol}://${req.get("host")}/uploads/${
+        claim.referenceImage
+      }`,
+      hospitalName: claim.hospitalName,
+      faceVerification: claim.faceVerification,
+      locationVerification: claim.locationVerification,
+      patientId: {
+        _id: claim.patientId._id,
+        name: claim.patientId.name,
+        email: claim.patientId.email,
       },
       submittedAt: claim.submittedAt,
       createdAt: claim.createdAt,
+      claimId: claim._id,
+      summaryAfterVerification: claim.summaryAfterVerification,
     }));
 
     res.status(200).json({
@@ -215,10 +223,138 @@ const getHospClaims = async (req, res) => {
   }
 };
 
+const getClaimById = async (req, res) => {
+  try {
+    const { cid } = req.params;
+
+    // Find the specific claim by ID
+    const claim = await HospitalSubmittedSchema.findById(cid)
+      .populate("patientId", "name email")
+      .populate("hospitalId", "hospitalName");
+
+    // If no claim found
+    if (!claim) {
+      return res.status(404).json({
+        success: false,
+        message: "Claim not found",
+      });
+    }
+
+    claim.referenceImage = `${req.protocol}://${req.get("host")}/uploads/${
+      claim.referenceImage
+    }`;
+
+    res.status(200).json({
+      success: true,
+      claim,
+    });
+  } catch (error) {
+    console.error("Error fetching claim details:", error);
+    res.status(500).json({
+      success: false,
+      message: "Error fetching claim details",
+      error: error.message,
+    });
+  }
+};
+
+const updateFaceVerificationCounter = async (req, res) => {
+  try {
+    const { cid } = req.params;
+
+    // Find the claim by ID
+    const claim = await HospitalSubmittedSchema.findById(cid);
+
+    if (!claim) {
+      return res.status(404).json({
+        success: false,
+        message: "Claim not found",
+      });
+    }
+
+    // Increment the counter regardless of verification result
+    claim.faceVerification.counter = (claim.faceVerification.counter || 0) + 1;
+
+    // Set timeout to exactly 24 hours from now
+    const timeOut = new Date();
+    timeOut.setHours(timeOut.getHours() + 24);
+    claim.faceVerification.timeOut = timeOut;
+
+    // Save the updated claim
+    await claim.save();
+
+    return res.status(200).json({
+      success: true,
+      message: "Face verification counter updated successfully",
+      updatedFaceVerification: claim.faceVerification,
+    });
+  } catch (error) {
+    console.error("Error updating face verification counter:", error);
+    return res.status(500).json({
+      success: false,
+      message: "Error updating face verification counter",
+      error: error.message,
+    });
+  }
+};
+
+const updateLocaVerificationCounter = async (req, res) => {
+  try {
+    const { cid } = req.params;
+
+    // Find the claim by ID
+    const claim = await HospitalSubmittedSchema.findById(cid);
+
+    if (!claim) {
+      return res.status(404).json({
+        success: false,
+        message: "Claim not found",
+      });
+    }
+
+    // Increment the counter regardless of verification result
+    claim.locationVerification.counter =
+      (claim.locationVerification.counter || 0) + 1;
+
+    // Set timeout to exactly 24 hours from now
+    const timeOut = new Date();
+    timeOut.setHours(timeOut.getHours() + 24);
+    claim.locationVerification.timeOut = timeOut;
+
+    // Check if counter is >= 2, then update HospitalSchema verificationStatus
+    if (claim.locationVerification.counter >= 2) {
+      // Find and update the hospital record
+      await HospitalSubmittedSchema.findByIdAndUpdate(
+        cid, // Assuming hospitalId is stored in the claim
+        { validationStatus: "CLAIM_PROCESSED" },
+        { new: true }
+      );
+    }
+
+    // Save the updated claim
+    await claim.save();
+
+    return res.status(200).json({
+      success: true,
+      message: "Location verification counter updated successfully",
+      updatedLocationVerification: claim.locationVerification,
+    });
+  } catch (error) {
+    console.error("Error updating location verification counter:", error);
+    return res.status(500).json({
+      success: false,
+      message: "Error updating location verification counter",
+      error: error.message,
+    });
+  }
+};
 module.exports = {
   uploadDocumentsForClaim,
   createUser,
   loginUser,
   getUserDetails,
   getHospClaims,
+  getClaimById,
+  updateFaceVerificationCounter,
+  updateLocaVerificationCounter,
 };

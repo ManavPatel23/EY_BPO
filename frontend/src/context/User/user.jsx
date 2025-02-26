@@ -20,10 +20,9 @@ export const getUserDetails = async (
 
     // Send request with Authorization header
 
-    const response = await axios.get(`${BACKEND_URL}/hosp/me`, {
+    const response = await axios.get(`${BACKEND_URL}/user/me`, {
       headers: {
         Authorization: token ? `Bearer ${token}` : "",
-        "ngrok-skip-browser-warning": "skip-browser-warning",
       },
     });
 

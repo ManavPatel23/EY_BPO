@@ -346,6 +346,7 @@ ${JSON.stringify(template, null, 2)}`;
       gender: (string or null),
       bloodGroup: (string or null)
     },
+    hospitalName : (string or null),
     surgeryName: (string or null),
     surgeryDate: (Date in ISO format or null),
     surgeryType: (string or null),

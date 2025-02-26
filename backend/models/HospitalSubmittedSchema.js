@@ -5,8 +5,24 @@ const HospitalSubmittedDataSchema = new mongoose.Schema(
     // insurance status
     validationStatus: {
       type: String,
-      enum: ["PENDING_REVIEW", "VERIFIED", "NEEDS_CORRECTION", "FAILED"],
+      enum: [
+        "PENDING_REVIEW",
+        "VERIFIED",
+        "NEEDS_CORRECTION",
+        "FAILED",
+        "CLAIM_PROCESSED",
+      ],
       default: "PENDING_REVIEW",
+    },
+
+    faceVerification: {
+      counter: { type: Number, default: 0 },
+      timeOut: { type: Date, default: Date.now },
+    },
+
+    locationVerification: {
+      counter: { type: Number, default: 0 },
+      timeOut: { type: Date, default: Date.now },
     },
 
     // any errors message for it
@@ -26,10 +42,11 @@ const HospitalSubmittedDataSchema = new mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: "Hospital",
     },
+    hospitalName: { type: String },
 
-    hospitalMemberId: {
+    patientId: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "HospitalMember",
+      ref: "User",
     },
 
     // Document collections remain as arrays since they represent multiple physical files
@@ -111,6 +128,8 @@ const HospitalSubmittedDataSchema = new mongoose.Schema(
       sumAssured: { type: Number },
       premiumAmount: { type: Number },
     },
+
+    referenceImage: { type: String },
 
     // Consolidated billing details as a single object
     billingDetails: {

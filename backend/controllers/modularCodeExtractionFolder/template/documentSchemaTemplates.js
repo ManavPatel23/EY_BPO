@@ -1,6 +1,6 @@
 const schemaTemplates = {
   policyDetailsTemplateSchema: {
-    policyNumber : "1223",
+    policyNumber: "1223",
     policyStartDate: "2023-10-15",
     policyEndDate: "2023-10-15",
     sumAssured: 10,
@@ -314,6 +314,7 @@ const schemaTemplates = {
       gender: "Male",
       bloodGroup: "O+",
     },
+    hospitalName: "Apollo Hospital",
     surgeryName: "Total Knee Replacement",
     surgeryDate: "2024-02-01",
     surgeryType: "Orthopedic",

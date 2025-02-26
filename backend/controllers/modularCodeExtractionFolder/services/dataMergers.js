@@ -816,7 +816,8 @@ const dataMergers = {
       new_data.recoveryNotes || existing.recoveryNotes || null;
     merged.followUpInstructions =
       new_data.followUpInstructions || existing.followUpInstructions || null;
-
+    merged.hospitalName = 
+    new_data.hospitalName || existing.hospitalName || null;
     return merged;
   },
 

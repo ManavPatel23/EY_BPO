@@ -29,15 +29,11 @@ const SeeAllClaimSubmitted = () => {
           throw new Error("No authentication token found. Please log in.");
         }
 
-        const response = await axios.get(
-          `${BACKEND_URL}/hosp/allClaims/${user._id}`,
-          {
-            headers: {
-              Authorization: token ? `Bearer ${token}` : "",
-              "ngrok-skip-browser-warning": "skip-browser-warning",
-            },
-          }
-        );
+        const response = await axios.get(`${BACKEND_URL}/hosp/allClaims`, {
+          headers: {
+            Authorization: token ? `Bearer ${token}` : "",
+          },
+        });
 
         if (response.data.success) {
           setClaimsData(response.data.data);
@@ -66,12 +62,51 @@ const SeeAllClaimSubmitted = () => {
     switch (status) {
       case "PENDING_REVIEW":
         return "bg-yellow-100 text-yellow-800";
-      case "APPROVED":
+      case "VERIFIED":
         return "bg-green-100 text-green-800";
-      case "REJECTED":
+      case "FAILED":
         return "bg-red-100 text-red-800";
       default:
         return "bg-gray-100 text-gray-800";
+    }
+  };
+
+  const handleClaimClick = (claim) => {
+    const claimId = claim.claimId;
+    const currentTime = new Date();
+
+    switch (claim.validationStatus) {
+      case "VERIFIED":
+        // Check if face verification is needed and if timeout has passed or isn't set
+        if (
+          claim.faceVerification.counter < 2 &&
+          (!claim.faceVerification.timeOut ||
+            new Date(claim.faceVerification.timeOut) < currentTime)
+        ) {
+          navigate(`/verify/face/${claim.claimId}`);
+        }
+        // If face is verified, check if location verification is needed and if timeout has passed or isn't set
+        else if (
+          claim.locationVerification.counter < 2 &&
+          (!claim.locationVerification.timeOut ||
+            new Date(claim.locationVerification.timeOut) < currentTime)
+        ) {
+          navigate(`/verify/location/${claimId}`);
+        }
+        // Both verifications are complete or timeouts haven't passed, just view the claim
+        else {
+          navigate(`/claim-details/${claimId}`);
+        }
+        break;
+
+      case "PENDING_REVIEW":
+      case "FAILED":
+        // For both pending and failed claims, go to claim details page
+        navigate(`/claim-details/${claimId}`);
+        break;
+
+      default:
+        navigate(`/claim-details/${claimId}`);
     }
   };
 
@@ -121,12 +156,16 @@ const SeeAllClaimSubmitted = () => {
               </thead>
               <tbody className="divide-y divide-gray-200">
                 {claimsData.map((claim, index) => (
-                  <tr key={index} className="hover:bg-gray-50">
+                  <tr
+                    key={index}
+                    className="hover:bg-gray-50 cursor-pointer"
+                    onClick={() => handleClaimClick(claim)}
+                  >
                     <td className="px-6 py-4 text-sm">
-                      {claim.hospitalMemberId.name}
+                      {claim.patientId.name}
                     </td>
                     <td className="px-6 py-4 text-sm">
-                      {claim.hospitalMemberId.email}
+                      {claim.patientId.email}
                     </td>
                     <td className="px-6 py-4">
                       <span

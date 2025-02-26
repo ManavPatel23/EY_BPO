@@ -104,6 +104,8 @@ class DocumentWatcher {
       // Process all document types
       updates = await this.extractAllDocumentData(doc, updates);
 
+      console.log(updates.operationDetails);
+
       // Validate policy number
       const validationResult = await this.validatePolicyNumber(updates);
       if (!validationResult.isValid) {
@@ -114,6 +116,18 @@ class DocumentWatcher {
         });
         return;
       }
+
+      updates = {
+        ...updates,
+        referenceImage: validationResult.policyDetails.referenceImage,
+        hospitalName: updates.operationDetails.hospitalName,
+      };
+
+      console.log(
+        "Reference Image ",
+        updates.referenceImage,
+        updates.hospitalName
+      );
 
       // Validate medical history
       const medicalValidationResult = await this.validateMedicalHistory(

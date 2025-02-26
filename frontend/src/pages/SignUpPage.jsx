@@ -32,7 +32,7 @@ export default function SignUpPage() {
 
     try {
       const response = await axios.post(
-        `${BACKEND_URL}/hosp/register`,
+        `${BACKEND_URL}/user/register`,
         formData,
         {
           withCredentials: true,
