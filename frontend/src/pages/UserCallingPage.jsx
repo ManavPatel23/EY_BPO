@@ -4,8 +4,8 @@ import { ZegoUIKitPrebuilt } from "@zegocloud/zego-uikit-prebuilt";
 import { BACKEND_URL_GENERAL, BACKEND_URL } from "../constant";
 import { UserContext } from "../context/userContext";
 
-const APP_ID = 1186325956;
-const SERVER_SECRET = "13b5c5fa6c8480498890b55f7a13bd52";
+const APP_ID = 1732474976;
+const SERVER_SECRET = "1359f8ebc4b18686a67903a028ec194a";
 
 function UserCallingPage() {
   const [otherPartyId, setOtherPartyId] = useState(null);
@@ -37,7 +37,6 @@ function UserCallingPage() {
     };
   }, []);
 
-  // Start Zego Call & Handle Recording
   const startZegoCall = async () => {
     try {
       await navigator.mediaDevices.getUserMedia({ audio: true });
@@ -73,7 +72,6 @@ function UserCallingPage() {
     }
   };
 
-  // Start Recording
   const startRecording = (userId) => {
     navigator.mediaDevices
       .getUserMedia({ audio: true })
@@ -109,7 +107,6 @@ function UserCallingPage() {
       );
   };
 
-  // Stop Recording
   const stopRecording = (userId) => {
     if (
       mediaRecorderRef.current[userId] &&
@@ -119,7 +116,6 @@ function UserCallingPage() {
     }
   };
 
-  // Upload Audio to Backend
   const uploadAudio = async (userId, audioFile, isAgent) => {
     try {
       const formData = new FormData();
@@ -145,7 +141,6 @@ function UserCallingPage() {
     }
   };
 
-  // Download Recorded Audio
   const downloadAudio = (userId) => {
     const audioUrl = recordedAudio[userId];
     if (audioUrl) {
@@ -165,7 +160,7 @@ function UserCallingPage() {
   return (
     <div className="w-screen min-h-screen bg-black text-white mx-auto p-6 ">
       {user && <h1>{user.name}</h1>}
-      <h1 className="text-2xl font-semibold mb-4">Customer Support</h1>
+      <h1 className="text-2xl font-semibold mb-4">Client View</h1>
 
       {/* Request Call Button */}
       {!callConnected && (
