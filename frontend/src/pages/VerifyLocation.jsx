@@ -203,7 +203,7 @@ const VerifyLocation = () => {
         mapRef.current.fitBounds(bounds);
       }
 
-      const isWithinLimit = dist <= 10000;
+      const isWithinLimit = dist <= 100;
 
       if (isWithinLimit) {
         setStatus(`Approved ✅ (${Math.round(dist)}m away)`);

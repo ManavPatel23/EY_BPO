@@ -95,6 +95,31 @@ callBetweenRouter.post("/schedule/call", async (req, res) => {
   }
 });
 
+// Get all schedules of agent
+callBetweenRouter.get("/schedules/agent/:agentId", async (req, res) => {
+  try {
+    const { agentId } = req.params;
+
+    if (!agentId) {
+      return res.status(400).json({ message: "Agent ID is required" });
+    }
+
+    // Find all schedules for this agent
+    const schedules = await Schedule.find({ agentId })
+      .sort({ scheduleDate: 1 }) // First sort by scheduleDate ascending
+      .populate("clientId", "name email") // Populate client info
+      .populate("agentId", "name email"); // Populate agent info
+
+    return res.status(200).json(schedules);
+  } catch (error) {
+    console.error("Error fetching agent schedules:", error);
+    return res.status(500).json({
+      message: "Failed to fetch schedules",
+      error: error.message,
+    });
+  }
+});
+
 callBetweenRouter.get("/test", async (req, res) => {
   try {
     const response = await axios.post(

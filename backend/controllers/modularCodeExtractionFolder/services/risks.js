@@ -400,6 +400,7 @@ let highlyriskupdates = {
     hospitalStayDuration: 1,
     postOpCare: "No care required (Fake Data)",
     followUpInstructions: "None",
+    hospitalName: "Shatabdi Hospital",
   },
   doctorsNoteDetails: {
     notes:
@@ -940,6 +941,7 @@ let moderateupdates = {
     hospitalStayDuration: 5,
     postOpCare: "Physiotherapy recommended.",
     followUpInstructions: "Routine checkup after 1 month.",
+    hospitalName: "Shatabdi Hospital",
   },
   pastMedicalCheckupsDetails: {
     patientDetails: {

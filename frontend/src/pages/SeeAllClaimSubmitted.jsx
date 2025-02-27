@@ -66,6 +66,8 @@ const SeeAllClaimSubmitted = () => {
         return "bg-green-100 text-green-800";
       case "FAILED":
         return "bg-red-100 text-red-800";
+      case "NEEDS_CORRECTION":
+        return "bg-yellow-500 text-red-800";
       default:
         return "bg-gray-100 text-gray-800";
     }
@@ -94,19 +96,27 @@ const SeeAllClaimSubmitted = () => {
           navigate(`/verify/location/${claimId}`);
         }
         // Both verifications are complete or timeouts haven't passed, just view the claim
-        else {
+        else if (
+          claim.faceVerification.counter >= 2 &&
+          claim.locationVerification.counter >= 2
+        ) {
           navigate(`/claim-details/${claimId}`);
         }
         break;
 
-      case "PENDING_REVIEW":
       case "FAILED":
-        // For both pending and failed claims, go to claim details page
-        navigate(`/claim-details/${claimId}`);
+      case "NEEDS_CORRECTION":
+        navigate(`/claim/fail/${claimId}`);
+        break;
+
+      case "PENDING_REVIEW":
+      case "CLAIM_PROCESSED":
+        // Do not navigate anywhere for these statuses
         break;
 
       default:
-        navigate(`/claim-details/${claimId}`);
+        // Handle any other statuses if needed
+        break;
     }
   };
 

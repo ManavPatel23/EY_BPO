@@ -17,6 +17,8 @@ import HomeForFaceAndLoc from "./pages/HomeForFaceAndLoc";
 import CallingPage from "./pages/CallingPage";
 import UserCallingPage from "./pages/UserCallingPage";
 import AgentCallingPage from "./pages/AgentCallingPage";
+import AgentSchedulesPage from "./pages/AgentSchedulesPage";
+import ClaimFailedPage from "./pages/ClaimFailedPage";
 
 function App() {
   const { setUser, user, setIsAuthen, setLoading, setError, loading } =
@@ -60,9 +62,14 @@ function App() {
                 path="/claim-details/:claimId"
                 element={<ClaimDetails />}
               />
+              <Route
+                path="/claim/fail/:claimId"
+                element={<ClaimFailedPage />}
+              />
               <Route path="/call" element={<CallingPage />} />
               <Route path="/user/call" element={<UserCallingPage />} />
               <Route path="/agent/call" element={<AgentCallingPage />} />
+              <Route path="/agent/schedules" element={<AgentSchedulesPage />} />
               <Route path="/all-claims" element={<SeeAllClaimSubmitted />} />
               <Route path="/hosp/login" element={<LoginPage />} />
               <Route path="/hosp/register" element={<SignUpPage />} />

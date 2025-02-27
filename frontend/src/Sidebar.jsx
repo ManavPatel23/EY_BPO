@@ -8,6 +8,11 @@ import {
   PlusCircle,
   LogIn,
   PersonStanding,
+  Calendar,
+  Phone,
+  Users,
+  Clock,
+  MessageSquare,
 } from "lucide-react";
 import { UserContext } from "./context/userContext";
 import Cookies from "js-cookie";
@@ -67,18 +72,7 @@ export function Sidebar({ className }) {
 
       {/* Navigation Items */}
       <nav className="flex flex-1 flex-col gap-2">
-        <NavItem
-          to="/claim"
-          icon={PlusCircle}
-          label="Apply for Claim"
-          isExpanded={isExpanded}
-        />
-        <NavItem
-          to="/all-claims"
-          icon={CheckCircle}
-          label="Check Claim Status"
-          isExpanded={isExpanded}
-        />
+        {/* Show navigation items based on user role */}
         {!user && (
           <>
             <NavItem
@@ -91,6 +85,40 @@ export function Sidebar({ className }) {
               to="/hosp/register"
               icon={PersonStanding}
               label="Register"
+              isExpanded={isExpanded}
+            />
+          </>
+        )}
+
+        {user && user.role === "User" && (
+          <>
+            <NavItem
+              to="/claim"
+              icon={PlusCircle}
+              label="Apply for Claim"
+              isExpanded={isExpanded}
+            />
+            <NavItem
+              to="/all-claims"
+              icon={CheckCircle}
+              label="Check Claim Status"
+              isExpanded={isExpanded}
+            />
+          </>
+        )}
+
+        {user && user.role === "Agent" && (
+          <>
+            <NavItem
+              to="/agent/schedules"
+              icon={Calendar}
+              label="My Schedules"
+              isExpanded={isExpanded}
+            />
+            <NavItem
+              to="/agent/call"
+              icon={Phone}
+              label="Call History"
               isExpanded={isExpanded}
             />
           </>
@@ -148,6 +176,11 @@ export function Sidebar({ className }) {
                 <p className="text-sm text-purple-200 truncate">
                   {user?.email}
                 </p>
+                {user?.role && (
+                  <p className="text-xs text-purple-100 truncate">
+                    {user.role}
+                  </p>
+                )}
               </div>
             )}
           </div>
