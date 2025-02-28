@@ -1,5 +1,12 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/Card";
-import { Brain, Calendar, MessageSquare, PieChart, Zap } from "lucide-react";
+import {
+  Brain,
+  Calendar,
+  MessageSquare,
+  PieChart,
+  Zap,
+  Shield,
+} from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Layout } from "@/components/reusableComp/Layout";
@@ -8,21 +15,21 @@ export default function Home() {
   const navigate = useNavigate();
 
   const handleClick = () => {
-    navigate("/support");
+    navigate("/hosp/login");
   };
   return (
     <Layout>
       <div className="max-w-7xl mx-auto py-1  2 px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-16 animate__animated animate__fadeIn animate__delay-1s">
           <h1 className="text-4xl font-extrabold text-gray-900 sm:text-5xl md:text-6xl">
-            <span className="block">Welcome to CallbackAI</span>
+            <span className="block">Welcome to ClaimSwift</span>
             <span className="block text-purple-600">
-              Intelligent Claims Management
+              Rapid Claims Processing
             </span>
           </h1>
           <p className="mt-3 max-w-md mx-auto text-base text-gray-500 sm:text-lg md:mt-5 md:text-xl md:max-w-3xl">
-            Streamline your claims processing with AI-powered scheduling,
-            sentiment analysis, and automated follow-ups.
+            Process claims in 5-10 minutes with advanced fraud detection,
+            streamlined workflows, and dedicated customer support.
           </p>
           <div className="mt-5 max-w-md mx-auto sm:flex sm:justify-center md:mt-8">
             <div className="rounded-md shadow">
@@ -47,7 +54,7 @@ export default function Home() {
         {/* Feature Section */}
         <div className="py-12 bg-white">
           <div className="max-w-xl mx-auto px-4 sm:px-6 lg:max-w-7xl lg:px-8">
-            <h2 className="sr-only">A better way to manage claims</h2>
+            <h2 className="sr-only">Fast and secure claims processing</h2>
             <div className="grid grid-cols-1 gap-y-12 gap-x-6 sm:grid-cols-2 lg:grid-cols-3">
               {features.map((feature) => (
                 <Card
@@ -80,8 +87,8 @@ export default function Home() {
                 Trusted by companies worldwide
               </h2>
               <p className="mt-3 text-xl text-white sm:mt-4">
-                Our AI-powered solution has transformed claims management for
-                businesses of all sizes.
+                Our rapid claims processing solution has transformed the
+                insurance industry with speed, accuracy, and security.
               </p>
             </div>
             <dl className="mt-10 text-center sm:max-w-3xl sm:mx-auto sm:grid sm:grid-cols-3 sm:gap-8">
@@ -105,15 +112,15 @@ export default function Home() {
               <span className="block">
                 Ready to revolutionize your claims process?
               </span>
-              <span className="block">Start using CallbackAI today.</span>
+              <span className="block">Start using ClaimSwift today.</span>
             </h2>
             <p className="mt-4 text-lg leading-6 text-purple-200">
-              Join the growing number of companies that are streamlining their
-              operations and improving customer satisfaction with our AI-powered
-              solution.
+              Join the growing number of companies that process claims in
+              minutes instead of days while protecting against fraud and
+              improving customer satisfaction.
             </p>
             <Button className="mt-8 w-full inline-flex items-center justify-center px-5 py-3 border border-transparent text-base font-medium rounded-md text-purple-600 bg-white hover:bg-purple-50 sm:w-auto transition-transform transform hover:scale-105">
-              Sign up for free trial
+              Sign up now
             </Button>
           </div>
         </div>
@@ -124,45 +131,45 @@ export default function Home() {
 
 const features = [
   {
-    name: "AI-Powered Scheduling",
+    name: "Rapid Claims Processing",
     description:
-      "Our intelligent system automatically prioritizes and schedules callbacks based on claim urgency and complexity.",
+      "Process claims in just 5-10 minutes with our intelligent system that automatically prioritizes and verifies claim information.",
     icon: Calendar,
   },
   {
-    name: "Sentiment Analysis",
+    name: "Advanced Fraud Detection",
     description:
-      "Real-time analysis of client interactions helps agents provide more empathetic and effective support.",
-    icon: PieChart,
+      "Our AI-powered system identifies potential fraud with high accuracy, protecting your business while ensuring legitimate claims are processed quickly.",
+    icon: Shield,
   },
   {
-    name: "Automated Follow-ups",
+    name: "Real-time Verification",
     description:
-      "Never miss a follow-up with our AI-driven system that ensures timely communication at every stage of the claims process.",
+      "Instantly verify claim details through our comprehensive database and partnership network, eliminating delays in the processing pipeline.",
     icon: Zap,
   },
   {
-    name: "Smart Knowledge Base",
+    name: "Smart Document Analysis",
     description:
-      "Agents have instant access to relevant information, powered by our AI that understands the context of each claim.",
+      "Our AI extracts and verifies information from submitted documents in seconds, reducing manual review and accelerating claim approval.",
     icon: Brain,
   },
   {
-    name: "Streamlined Workflow",
+    name: "Simplified User Interface",
     description:
-      "Our intuitive interface combines all necessary tools in one place, significantly reducing processing time and errors.",
-    icon: Zap,
+      "Easy-to-use portals for both customers and claims processors make submitting and reviewing claims intuitive and hassle-free.",
+    icon: MessageSquare,
   },
   {
-    name: "Enhanced Client Experience",
+    name: "24/7 Customer Support",
     description:
-      "By optimizing every interaction, we help you provide a smoother, more satisfying experience for your clients.",
-    icon: MessageSquare,
+      "Our dedicated support team is always available to assist with any questions or issues, ensuring a smooth claims experience for everyone.",
+    icon: Zap,
   },
 ];
 
 const stats = [
-  { label: "Claims Processed", value: "500K+" },
+  { label: "Average Processing Time", value: "7 min" },
+  { label: "Fraud Detection Rate", value: "99.7%" },
   { label: "Customer Satisfaction", value: "98%" },
-  { label: "Claims Completed", value: "85%" },
 ];
